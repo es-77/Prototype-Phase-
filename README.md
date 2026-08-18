@@ -99,20 +99,14 @@ mysql -u root -p VServiceDB < database/vservice_db.sql
 
 ---
 
-## 🎨 Asset Compilation & Running the App
+## 🎨 Front-End Styles & Local Compilation
 
-### 1. Install & Build Front-end Assets
-This project uses Vite with Tailwind CSS. Install the Node packages and build the assets:
-```bash
-# Install dependencies
-npm install
+The compiled Tailwind CSS stylesheet is tracked and saved locally in the repository at [public/css/tailwind.css](file:///c:/laragon/www/Prototype-Phase-/public/css/tailwind.css). 
 
-# Compile assets for production
-npm run build
-```
+This means **you do not need to install Node.js/NPM or run compile/build commands to run the styling on the first clone!** It works out of the box.
 
-### 2. Start the Application Server
-Run the local development server:
+### Option A: Standard Run (Zero NPM Setup)
+To run the app, you only need standard PHP setup:
 ```bash
 php artisan serve
 ```
@@ -120,10 +114,24 @@ Your application will be live at: [http://localhost:8000](http://localhost:8000)
 
 ---
 
+### Option B: Development Mode (Tailwind Recompilation)
+If you wish to edit Tailwind CSS classes, add custom styling, or modify the theme:
+1. **Install Node dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Recompile CSS style file:**
+   ```bash
+   # This runs the Tailwind CLI to compile resources/css/app.css directly to public/css/tailwind.css
+   npm run build:css
+   ```
+
+---
+
 ## 📂 Project Structure Highlights
 
-- **Migrations:** Define the database schema. Located in [database/migrations/](file:///home/shayan/Desktop/php-dev/vehicle-service/database/migrations/).
-- **Models:** Contains [VehicleService.php](file:///home/shayan/Desktop/php-dev/vehicle-service/app/Models/VehicleService.php).
-- **Controllers:** Handles request logic in [VehicleServiceController.php](file:///home/shayan/Desktop/php-dev/vehicle-service/app/Http/Controllers/VehicleServiceController.php).
-- **Routes:** Core web routes defined in [routes/web.php](file:///home/shayan/Desktop/php-dev/vehicle-service/routes/web.php).
-- **SQL Import Script:** Located at [database/vservice_db.sql](file:///home/shayan/Desktop/php-dev/vehicle-service/database/vservice_db.sql).
+- **Migrations:** Define the database schema. Located in [database/migrations/](file:///c:/laragon/www/Prototype-Phase-/database/migrations/).
+- **Models:** Contains [VehicleService.php](file:///c:/laragon/www/Prototype-Phase-/app/Models/VehicleService.php).
+- **Controllers:** Handles request logic in [VehicleServiceController.php](file:///c:/laragon/www/Prototype-Phase-/app/Http/Controllers/VehicleServiceController.php).
+- **Routes:** Core web routes defined in [routes/web.php](file:///c:/laragon/www/Prototype-Phase-/routes/web.php).
+- **SQL Import Script:** Located at [database/vservice_db.sql](file:///c:/laragon/www/Prototype-Phase-/database/vservice_db.sql).

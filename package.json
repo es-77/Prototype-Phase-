@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build:css": "npx @tailwindcss/cli -i resources/css/app.css -o public/css/tailwind.css"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
