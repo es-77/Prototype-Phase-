@@ -109,7 +109,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Enter Service ID to Search</label>
                         <div class="mt-1 flex gap-2">
-                            <input type="number" name="search_id" required value="{{ request('search_id') }}" placeholder="e.g. 1" class="block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                            <input type="number" name="search_id" id="search_service_id" required value="{{ request('search_id') }}" placeholder="e.g. 1" class="block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded text-sm transition whitespace-nowrap">
                                 Search Record
                             </button>
@@ -124,33 +124,38 @@
                 </form>
 
                 <!-- Search Results Display -->
-                @if($searchPerformed)
-                    <div class="mt-6 p-4 border border-gray-300 rounded bg-gray-50">
-                        <h3 class="font-semibold text-gray-800 mb-2 border-b pb-1">Search Result:</h3>
-                        @if($searchedService)
-                            <div class="flex flex-col sm:flex-row gap-4">
-                                <div class="w-full sm:w-1/3">
-                                    @if($searchedService->Picture)
-                                        <img src="{{ asset($searchedService->Picture) }}" alt="Service Picture" class="w-full h-auto rounded border shadow-sm max-h-32 object-cover">
-                                    @else
-                                        <div class="w-full h-24 bg-gray-200 border rounded flex items-center justify-center text-xs text-gray-500">
-                                            No Picture
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="w-full sm:w-2/3 space-y-1 text-sm text-gray-700">
-                                    <p><strong>Service ID:</strong> {{ $searchedService->ServiceId }}</p>
-                                    <p><strong>Service Name:</strong> {{ $searchedService->ServiceName }}</p>
-                                    <p><strong>Vehicle Model:</strong> {{ $searchedService->VehicleModel }}</p>
-                                    <p><strong>Service Type:</strong> {{ $searchedService->ServiceType }}</p>
-                                    <p><strong>Service Amount:</strong> ${{ number_format($searchedService->ServiceAmount, 2) }}</p>
-                                </div>
+                <div id="search_results_container" class="{{ $searchPerformed ? '' : 'hidden' }} mt-6 p-4 border border-gray-300 rounded bg-gray-50">
+                    <h3 class="font-semibold text-gray-800 mb-2 border-b pb-1">Search Result:</h3>
+                    
+                    <div id="search_result_found" class="{{ ($searchPerformed && $searchedService) ? '' : 'hidden' }} flex flex-col sm:flex-row gap-4">
+                        <div class="w-full sm:w-1/3">
+                            <div id="search_pic_container">
+                                @if($searchPerformed && $searchedService && $searchedService->Picture)
+                                    <img id="search_pic" src="{{ asset($searchedService->Picture) }}" alt="Service Picture" class="w-full h-auto rounded border shadow-sm max-h-32 object-cover">
+                                    <div id="search_no_pic" class="w-full h-24 bg-gray-200 border rounded flex items-center justify-center text-xs text-gray-500 hidden">
+                                        No Picture
+                                    </div>
+                                @else
+                                    <img id="search_pic" src="" alt="Service Picture" class="w-full h-auto rounded border shadow-sm max-h-32 object-cover hidden">
+                                    <div id="search_no_pic" class="w-full h-24 bg-gray-200 border rounded flex items-center justify-center text-xs text-gray-500">
+                                        No Picture
+                                    </div>
+                                @endif
                             </div>
-                        @else
-                            <p class="text-red-600 text-sm">No service record was found with ID: <strong>{{ request('search_id') }}</strong></p>
-                        @endif
+                        </div>
+                        <div class="w-full sm:w-2/3 space-y-1 text-sm text-gray-700">
+                            <p><strong>Service ID:</strong> <span id="search_display_id">{{ $searchPerformed && $searchedService ? $searchedService->ServiceId : '' }}</span></p>
+                            <p><strong>Service Name:</strong> <span id="search_display_name">{{ $searchPerformed && $searchedService ? $searchedService->ServiceName : '' }}</span></p>
+                            <p><strong>Vehicle Model:</strong> <span id="search_display_model">{{ $searchPerformed && $searchedService ? $searchedService->VehicleModel : '' }}</span></p>
+                            <p><strong>Service Type:</strong> <span id="search_display_type">{{ $searchPerformed && $searchedService ? $searchedService->ServiceType : '' }}</span></p>
+                            <p><strong>Service Amount:</strong> $<span id="search_display_amount">{{ $searchPerformed && $searchedService ? number_format($searchedService->ServiceAmount, 2) : '' }}</span></p>
+                        </div>
                     </div>
-                @endif
+                    
+                    <div id="search_result_not_found" class="{{ ($searchPerformed && !$searchedService) ? '' : 'hidden' }} text-red-600 text-sm">
+                        No service record was found with ID: <strong id="search_display_not_found_id">{{ request('search_id') }}</strong>
+                    </div>
+                </div>
             </div>
 
             <!-- FORM 3: Update (Edit Record) -->
@@ -298,6 +303,48 @@
     <!-- JS script to fill update/delete forms when selecting record -->
     <script>
         function loadServiceDetails(service) {
+            // fill up field of search form (Form 2)
+            const searchServiceIdInput = document.getElementById('search_service_id');
+            if (searchServiceIdInput) {
+                searchServiceIdInput.value = service.ServiceId;
+            }
+
+            // fill up and show details in search result display box of Form 2
+            const searchContainer = document.getElementById('search_results_container');
+            const searchResultFound = document.getElementById('search_result_found');
+            const searchResultNotFound = document.getElementById('search_result_not_found');
+
+            if (searchContainer) searchContainer.classList.remove('hidden');
+            if (searchResultFound) searchResultFound.classList.remove('hidden');
+            if (searchResultNotFound) searchResultNotFound.classList.add('hidden');
+
+            const displayId = document.getElementById('search_display_id');
+            const displayName = document.getElementById('search_display_name');
+            const displayModel = document.getElementById('search_display_model');
+            const displayType = document.getElementById('search_display_type');
+            const displayAmount = document.getElementById('search_display_amount');
+
+            if (displayId) displayId.textContent = service.ServiceId;
+            if (displayName) displayName.textContent = service.ServiceName;
+            if (displayModel) displayModel.textContent = service.VehicleModel;
+            if (displayType) displayType.textContent = service.ServiceType;
+            if (displayAmount) displayAmount.textContent = parseFloat(service.ServiceAmount).toFixed(2);
+
+            // handle picture preview in Form 2
+            const searchPic = document.getElementById('search_pic');
+            const searchNoPic = document.getElementById('search_no_pic');
+            if (searchPic && searchNoPic) {
+                if (service.Picture) {
+                    searchPic.src = '/' + service.Picture;
+                    searchPic.classList.remove('hidden');
+                    searchNoPic.classList.add('hidden');
+                } else {
+                    searchPic.src = '';
+                    searchPic.classList.add('hidden');
+                    searchNoPic.classList.remove('hidden');
+                }
+            }
+
             // fill up fields of update form
             document.getElementById('update_service_id').value = service.ServiceId;
             document.getElementById('update_service_name').value = service.ServiceName;
