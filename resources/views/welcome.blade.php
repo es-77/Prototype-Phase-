@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Service Manager (VServiceDB)</title>
-    <!-- load vite styles and scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     
+    <!-- Local Compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
     <style>
         body {
             /* Task 3: add background picture here */
